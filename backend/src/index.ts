@@ -656,6 +656,42 @@ app.get('/admin/stats/appointments', authenticateToken, requireAdminRole, async 
 });
 
 /**
+ * GET /admin/appointments
+ * Get all appointments (admin only)
+ */
+app.get('/admin/appointments', authenticateToken, requireAdminRole, async (req: AuthRequest, res: Response) => {
+  try {
+    const appointments = await queries.getAdminAppointments();
+
+    const formattedAppointments = (appointments as any[]).map((appointment) => ({
+      id: appointment.Id,
+      customer: appointment.CustomerName,
+      staff: appointment.StaffName,
+      service: appointment.ServiceName,
+      date: appointment.AppointmentDate,
+      time: appointment.AppointmentTime,
+      status: appointment.Status,
+      totalPrice: Number(appointment.TotalPrice || 0),
+      durationMinutes: Number(appointment.DurationMinutes || 0),
+      createdAt: appointment.CreatedAt,
+    }));
+
+    res.json({
+      success: true,
+      data: formattedAppointments,
+      count: formattedAppointments.length,
+    });
+  } catch (error) {
+    console.error('Error fetching admin appointments:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch appointments',
+      error: String(error),
+    });
+  }
+});
+
+/**
  * GET /admin/staff/pending
  * Get all pending staff registrations (admin only)
  */

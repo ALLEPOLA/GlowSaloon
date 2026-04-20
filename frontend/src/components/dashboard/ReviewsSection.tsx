@@ -38,27 +38,27 @@ const ReviewsSection: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold text-gray-800">My Reviews</h1>
+      <h1 className="text-4xl font-bold text-slate-100">My Reviews</h1>
 
       {loading && (
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center text-gray-500 font-semibold">
+        <div className="bg-slate-800 rounded-2xl shadow-lg p-8 text-center text-slate-400 font-semibold border border-slate-700">
           Loading reviews...
         </div>
       )}
 
       {!loading && reviews.length === 0 && (
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center text-gray-500">
+        <div className="bg-slate-800 rounded-2xl shadow-lg p-8 text-center text-slate-400 border border-slate-700">
           You have not added any reviews yet.
         </div>
       )}
 
       <div className="space-y-4">
         {reviews.map(review => (
-          <div key={review.Id} className="bg-white rounded-2xl shadow-lg p-8">
+          <div key={review.Id} className="bg-slate-800 rounded-2xl shadow-lg p-8 border border-slate-700">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h3 className="text-xl font-bold text-gray-800">{review.ServiceName}</h3>
-                <p className="text-gray-600">with {review.StaffName} • {formatDate(review.CreatedAt)}</p>
+                <h3 className="text-xl font-bold text-slate-100">{review.ServiceName}</h3>
+                <p className="text-slate-400">with {review.StaffName} • {formatDate(review.CreatedAt)}</p>
               </div>
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
@@ -68,7 +68,7 @@ const ReviewsSection: React.FC = () => {
                 ))}
               </div>
             </div>
-            <p className="text-gray-700">{review.Comment || 'No comment provided.'}</p>
+            <p className="text-slate-300">{review.Comment || 'No comment provided.'}</p>
           </div>
         ))}
       </div>

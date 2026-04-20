@@ -14,11 +14,10 @@ import ManageServicesTab from '../components/admin-dashboard/ManageServicesTab';
 import ManageCategoriesTab from '../components/admin-dashboard/ManageCategoriesTab';
 import ManageAppointmentsTab from '../components/admin-dashboard/ManageAppointmentsTab';
 import AdminReviewsTab from '../components/admin-dashboard/AdminReviewsTab';
-import PaymentsReportsTab from '../components/admin-dashboard/PaymentsReportsTab';
 import SystemSettingsTab from '../components/admin-dashboard/SystemSettingsTab';
 import AdminNotificationsTab from '../components/admin-dashboard/AdminNotificationsTab';
 
-type AdminTabType = 'dashboard' | 'customers' | 'staff' | 'services' | 'appointments' | 'categories' | 'reviews' | 'payments' | 'settings' | 'notifications';
+type AdminTabType = 'dashboard' | 'customers' | 'staff' | 'services' | 'appointments' | 'categories' | 'reviews' | 'settings' | 'notifications';
 type AdminNotification = {
   id: number;
   message: string;
@@ -148,13 +147,6 @@ const AdminDashboardPage: React.FC = () => {
             {activeTab === 'reviews' && (
               <div className="animate-fade-in">
                 <AdminReviewsTab />
-              </div>
-            )}
-
-            {/* Payments & Reports Tab */}
-            {activeTab === 'payments' && (
-              <div className="animate-fade-in">
-                <PaymentsReportsTab />
               </div>
             )}
 

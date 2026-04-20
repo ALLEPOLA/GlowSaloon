@@ -40,35 +40,35 @@ const RecentAppointments: React.FC<RecentAppointmentsProps> = ({
   title = 'Recent Appointments',
 }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 border-t-4 border-teal-500">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+    <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-slate-700/60">
+      <h2 className="text-3xl font-bold text-slate-100 mb-6 flex items-center gap-2">
         <span>📋</span> {title}
       </h2>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b-2 border-gray-200">
-              <th className="text-left p-3 font-bold text-gray-700">Service</th>
-              <th className="text-left p-3 font-bold text-gray-700">Stylist</th>
-              <th className="text-left p-3 font-bold text-gray-700">Date</th>
-              <th className="text-left p-3 font-bold text-gray-700">Status</th>
-              <th className="text-left p-3 font-bold text-gray-700">Action</th>
+            <tr className="border-b-2 border-slate-700">
+              <th className="text-left p-3 font-bold text-slate-300">Service</th>
+              <th className="text-left p-3 font-bold text-slate-300">Stylist</th>
+              <th className="text-left p-3 font-bold text-slate-300">Date</th>
+              <th className="text-left p-3 font-bold text-slate-300">Status</th>
+              <th className="text-left p-3 font-bold text-slate-300">Action</th>
             </tr>
           </thead>
           <tbody>
             {appointments.map(apt => (
-              <tr key={apt.id} className="border-b border-gray-100 hover:bg-emerald-50 transition">
-                <td className="p-3 text-gray-800 font-semibold">{apt.service}</td>
-                <td className="p-3 text-gray-600">{apt.stylist}</td>
-                <td className="p-3 text-gray-600">{apt.date}</td>
+              <tr key={apt.id} className="border-b border-slate-700 hover:bg-slate-900/30 transition">
+                <td className="p-3 text-slate-100 font-semibold">{apt.service}</td>
+                <td className="p-3 text-slate-400">{apt.stylist}</td>
+                <td className="p-3 text-slate-400">{apt.date}</td>
                 <td className="p-3">
-                  <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                  <span className="bg-emerald-900/40 text-emerald-200 border border-slate-700 px-3 py-1 rounded-full text-sm font-semibold">
                     ✓ {apt.status}
                   </span>
                 </td>
                 <td className="p-3">
                   {apt.status === 'Completed' && (
-                    <button className="text-emerald-600 hover:text-emerald-700 font-semibold">
+                    <button className="text-teal-300 hover:text-teal-200 font-semibold">
                       ⭐ Review
                     </button>
                   )}

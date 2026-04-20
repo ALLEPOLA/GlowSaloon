@@ -43,32 +43,32 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-100 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background elements */}
-      <div className="absolute top-10 right-10 text-green-200 text-8xl opacity-20 animate-pulse" style={{animationDuration: '4s'}}>🌿</div>
-      <div className="absolute bottom-20 left-10 text-green-200 text-8xl opacity-20 animate-pulse" style={{animationDuration: '5s'}}>🍃</div>
-      <div className="absolute top-1/4 left-20 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-20 w-72 h-72 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
+      <div className="absolute top-10 right-10 text-teal-800 text-8xl opacity-10 animate-pulse" style={{animationDuration: '4s'}}>🌿</div>
+      <div className="absolute bottom-20 left-10 text-teal-800 text-8xl opacity-10 animate-pulse" style={{animationDuration: '5s'}}>🍃</div>
+      <div className="absolute top-1/4 left-20 w-72 h-72 bg-teal-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-20 w-72 h-72 bg-emerald-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 animate-pulse"></div>
       
       <div className="w-full max-w-md relative z-10 transform transition-all duration-500 hover:scale-105">
         {/* Glassmorphism card with gradient border */}
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-700 via-teal-700 to-emerald-700 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-500"></div>
           
-          <div className="relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20">
+          <div className="relative bg-slate-800/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-slate-600/50">
             {/* Header Section with Animation */}
             <div className="text-center mb-8 animate-fade-in">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <span className="text-5xl animate-bounce" style={{animationDuration: '2s'}}>🌱</span>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 bg-clip-text text-transparent">GlowVault</h1>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-400 to-emerald-400 bg-clip-text text-transparent">GlowVault</h1>
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back</h2>
-              <p className="text-gray-600">Sign in to your eco-friendly beauty experience</p>
+              <h2 className="text-2xl font-bold text-slate-100 mb-2">Welcome Back</h2>
+              <p className="text-slate-400">Sign in to your eco-friendly beauty experience</p>
             </div>
 
             {/* Error Alert with Animation */}
             {error && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-300 text-red-700 rounded-xl animate-slide-down font-medium flex items-center gap-2">
+              <div className="mb-6 p-4 bg-slate-900/50 border-l-4 border-red-500 text-red-400 rounded-xl animate-slide-down font-medium flex items-center gap-2">
                 <span className="text-xl">⚠️</span>
                 {error}
               </div>
@@ -78,7 +78,7 @@ const LoginPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email Field */}
               <div className="relative group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-slate-300 mb-2">
                   <span className="inline-block mr-1">📧</span>Email Address
                 </label>
                 <div className={`relative transition-all duration-300 ${focusedField === 'email' ? 'scale-105' : ''}`}>
@@ -89,22 +89,22 @@ const LoginPage: React.FC = () => {
                     onChange={handleChange}
                     onFocus={() => setFocusedField('email')}
                     onBlur={() => setFocusedField(null)}
-                    className={`w-full px-5 py-3 text-gray-800 placeholder-gray-400 border-2 rounded-xl transition-all duration-300 focus:outline-none ${
+                    className={`w-full px-5 py-3 text-white placeholder-slate-500 border-2 rounded-xl transition-all duration-300 focus:outline-none ${
                       focusedField === 'email'
-                        ? 'border-emerald-500 shadow-lg shadow-emerald-200 bg-emerald-50/50'
-                        : 'border-gray-200 hover:border-emerald-300 bg-gray-50'
+                        ? 'border-teal-500 shadow-lg shadow-teal-500/20 bg-slate-900/50'
+                        : 'border-slate-600 hover:border-teal-400 bg-slate-700/50'
                     }`}
                     placeholder="your@email.com"
                   />
                   {focusedField === 'email' && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500 animate-pulse">✓</div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-teal-500 animate-pulse">✓</div>
                   )}
                 </div>
               </div>
 
               {/* Password Field */}
               <div className="relative group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-slate-300 mb-2">
                   <span className="inline-block mr-1">🔐</span>Password
                 </label>
                 <div className={`relative transition-all duration-300 ${focusedField === 'password' ? 'scale-105' : ''}`}>
@@ -115,15 +115,15 @@ const LoginPage: React.FC = () => {
                     onChange={handleChange}
                     onFocus={() => setFocusedField('password')}
                     onBlur={() => setFocusedField(null)}
-                    className={`w-full px-5 py-3 text-gray-800 placeholder-gray-400 border-2 rounded-xl transition-all duration-300 focus:outline-none ${
+                    className={`w-full px-5 py-3 text-white placeholder-slate-500 border-2 rounded-xl transition-all duration-300 focus:outline-none ${
                       focusedField === 'password'
-                        ? 'border-emerald-500 shadow-lg shadow-emerald-200 bg-emerald-50/50'
-                        : 'border-gray-200 hover:border-emerald-300 bg-gray-50'
+                        ? 'border-teal-500 shadow-lg shadow-teal-500/20 bg-slate-900/50'
+                        : 'border-slate-600 hover:border-teal-400 bg-slate-700/50'
                     }`}
                     placeholder="••••••••"
                   />
                   {focusedField === 'password' && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500 animate-pulse">✓</div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-teal-500 animate-pulse">✓</div>
                   )}
                 </div>
               </div>
@@ -131,10 +131,10 @@ const LoginPage: React.FC = () => {
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 cursor-pointer group">
-                  <input type="checkbox" className="w-4 h-4 rounded-md cursor-pointer accent-emerald-600" />
-                  <span className="text-gray-700 group-hover:text-emerald-600 transition">Remember me</span>
+                  <input type="checkbox" className="w-4 h-4 rounded-md cursor-pointer accent-teal-500 bg-slate-700 border-slate-600" />
+                  <span className="text-slate-300 group-hover:text-teal-400 transition">Remember me</span>
                 </label>
-                <a href="#" className="text-emerald-600 hover:text-emerald-700 font-semibold transition hover:underline">
+                <a href="#" className="text-teal-400 hover:text-teal-300 font-semibold transition hover:underline">
                   Forgot?
                 </a>
               </div>
@@ -145,8 +145,8 @@ const LoginPage: React.FC = () => {
                 disabled={loading}
                 className={`w-full py-3 px-4 rounded-xl font-bold text-white text-lg transition-all duration-500 transform ${
                   loading
-                    ? 'bg-gradient-to-r from-gray-400 to-gray-500 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-700 hover:via-green-700 hover:to-teal-700 hover:shadow-2xl hover:shadow-emerald-300 hover:-translate-y-1 active:translate-y-0 active:shadow-lg'
+                    ? 'bg-slate-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 hover:shadow-2xl hover:shadow-teal-500/30 hover:-translate-y-1 active:translate-y-0 active:shadow-lg'
                 } flex items-center justify-center gap-2 shadow-lg`}
               >
                 {loading ? (
@@ -165,27 +165,27 @@ const LoginPage: React.FC = () => {
 
             {/* Divider */}
             <div className="my-6 flex items-center gap-3">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-              <span className="text-gray-400 text-sm">or</span>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
+              <span className="text-slate-500 text-sm">or</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
             </div>
 
             {/* Social Login Buttons */}
             <div className="grid grid-cols-2 gap-3 mb-6">
-              <button className="py-2 px-3 border-2 border-gray-200 rounded-lg hover:border-emerald-400 hover:bg-emerald-50 transition duration-300 flex items-center justify-center gap-2 font-semibold text-gray-700">
+              <button className="py-2 px-3 border-2 border-slate-600 rounded-lg hover:border-teal-400 hover:bg-slate-700/50 transition duration-300 flex items-center justify-center gap-2 font-semibold text-slate-200">
                 <span className="text-xl">🌍</span>Google
               </button>
-              <button className="py-2 px-3 border-2 border-gray-200 rounded-lg hover:border-emerald-400 hover:bg-emerald-50 transition duration-300 flex items-center justify-center gap-2 font-semibold text-gray-700">
+              <button className="py-2 px-3 border-2 border-slate-600 rounded-lg hover:border-teal-400 hover:bg-slate-700/50 transition duration-300 flex items-center justify-center gap-2 font-semibold text-slate-200">
                 <span className="text-xl">👤</span>Facebook
               </button>
             </div>
 
             {/* Register Link */}
-            <p className="text-center text-gray-600">
+            <p className="text-center text-slate-400">
               Don't have an account?{' '}
               <button
                 onClick={() => navigate('/register')}
-                className="text-emerald-600 hover:text-emerald-700 font-bold transition hover:underline"
+                className="text-teal-400 hover:text-teal-300 font-bold transition hover:underline"
               >
                 Create one now
               </button>

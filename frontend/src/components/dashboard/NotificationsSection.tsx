@@ -37,25 +37,25 @@ const NotificationsSection: React.FC<NotificationsSectionProps> = ({
 }) => {
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-bold text-gray-800">Notifications</h1>
+      <h1 className="text-4xl font-bold text-slate-100">Notifications</h1>
 
       <div className="space-y-4">
         {notifications.map(notif => (
           <div
             key={notif.id}
-            className={`bg-white rounded-2xl shadow-lg p-6 ${
-              !notif.read ? 'border-l-4 border-emerald-500' : ''
+            className={`bg-slate-800 rounded-2xl shadow-lg p-6 border border-slate-700 ${
+              !notif.read ? 'border-l-4 border-teal-500' : ''
             }`}
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <p className="text-gray-800 font-semibold mb-2">{notif.message}</p>
-                <p className="text-sm text-gray-600 capitalize">{notif.type}</p>
+                <p className="text-slate-100 font-semibold mb-2">{notif.message}</p>
+                <p className="text-sm text-slate-400 capitalize">{notif.type}</p>
               </div>
               {!notif.read && (
                 <button
                   onClick={() => onMarkAsRead(notif.id)}
-                  className="ml-4 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-semibold whitespace-nowrap"
+                  className="ml-4 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition font-semibold whitespace-nowrap"
                 >
                   Mark read
                 </button>

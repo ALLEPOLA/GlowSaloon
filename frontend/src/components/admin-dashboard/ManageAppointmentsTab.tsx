@@ -1,26 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import api from '../../services/authService';
 
 const ManageAppointmentsTab: React.FC = () => {
   const [filter, setFilter] = useState('All');
+  const [appointments, setAppointments] = useState<Array<{
+    id: number;
+    customer: string;
+    staff: string;
+    service: string;
+    date: string;
+    time: string;
+    status: string;
+  }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const appointments = [
-    { id: 101, customer: 'Alice Johnson', staff: 'Sarah Jenkins', service: 'Haircut', date: 'Oct 25, 2023', time: '10:00 AM', status: 'Pending' },
-    { id: 102, customer: 'Robert Smith', staff: 'Michael Chen', service: 'Massage', date: 'Oct 25, 2023', time: '11:30 AM', status: 'In Progress' },
-    { id: 103, customer: 'Maria Garcia', staff: 'Emma Watson', service: 'Coloring', date: 'Oct 26, 2023', time: '02:00 PM', status: 'Confirmed' },
-    { id: 104, customer: 'James Wilson', staff: 'Sarah Jenkins', service: 'Styling', date: 'Oct 24, 2023', time: '09:00 AM', status: 'Completed' },
-    { id: 105, customer: 'Lucy Brown', staff: 'Michael Chen', service: 'Massage', date: 'Oct 24, 2023', time: '01:00 PM', status: 'Cancelled' },
-  ];
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        setError(null);
+        const res = await api.get('/admin/appointments');
+        if (res.data.success && Array.isArray(res.data.data)) {
+          setAppointments(res.data.data);
+        } else {
+          setError('Failed to load appointments.');
+        }
+      } catch (err) {
+        console.error('Failed to fetch admin appointments', err);
+        setError('Failed to load appointments.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredApps = filter === 'All' ? appointments : appointments.filter(a => a.status === filter);
+    fetchAppointments();
+  }, []);
+
+  const filteredApps = useMemo(
+    () => (filter === 'All' ? appointments : appointments.filter((a) => a.status === filter)),
+    [appointments, filter]
+  );
+
+  const formatDate = (dateValue: string) => {
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return dateValue;
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
+  const formatTime = (timeValue: string) => {
+    if (!timeValue) return 'N/A';
+    const candidate = new Date(`1970-01-01T${timeValue}`);
+    if (!Number.isNaN(candidate.getTime())) {
+      return candidate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    }
+    return timeValue;
+  };
 
   const getStatusColor = (status: string) => {
-    switch(status) {
-      case 'Completed': return 'bg-emerald-100 text-emerald-700';
-      case 'In Progress': return 'bg-teal-100 text-teal-700';
-      case 'Confirmed': return 'bg-emerald-100 text-emerald-700';
-      case 'Pending': return 'bg-amber-100 text-amber-700';
-      case 'Cancelled': return 'bg-amber-100 text-amber-700';
-      default: return 'bg-gray-100 text-gray-700';
+    switch (status) {
+      case 'Completed':
+        return 'bg-emerald-100 text-emerald-700';
+      case 'In Progress':
+        return 'bg-teal-100 text-teal-700';
+      case 'Confirmed':
+        return 'bg-emerald-100 text-emerald-700';
+      case 'Pending':
+        return 'bg-amber-100 text-amber-700';
+      case 'Cancelled':
+        return 'bg-amber-100 text-amber-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
     }
   };
 
@@ -62,7 +111,21 @@ const ManageAppointmentsTab: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700/60">
-            {filteredApps.map(app => (
+            {loading && (
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                  Loading appointments...
+                </td>
+              </tr>
+            )}
+            {!loading && error && (
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-amber-200">
+                  {error}
+                </td>
+              </tr>
+            )}
+            {!loading && !error && filteredApps.map((app) => (
               <tr key={app.id} className="hover:bg-slate-900/30 transition">
                 <td className="px-6 py-4 font-black text-slate-500">#{app.id}</td>
                 <td className="px-6 py-4">
@@ -71,7 +134,9 @@ const ManageAppointmentsTab: React.FC = () => {
                 </td>
                 <td className="px-6 py-4">
                   <p className="text-sm font-bold text-slate-200">{app.service}</p>
-                  <p className="text-xs text-slate-400 flex items-center gap-1">📅 {app.date} 🕒 {app.time}</p>
+                  <p className="text-xs text-slate-400 flex items-center gap-1">
+                    📅 {formatDate(app.date)} 🕒 {formatTime(app.time)}
+                  </p>
                 </td>
                 <td className="px-6 py-4">
                   <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(app.status)}`}>
@@ -84,6 +149,13 @@ const ManageAppointmentsTab: React.FC = () => {
                 </td>
               </tr>
             ))}
+            {!loading && !error && filteredApps.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                  No appointments found for the selected filter.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

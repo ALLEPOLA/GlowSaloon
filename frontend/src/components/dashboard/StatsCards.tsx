@@ -76,10 +76,10 @@ const StatsCards: React.FC = () => {
   const valueOrLoading = (value: number) => (loading ? '...' : String(value));
 
   const stats: Stat[] = [
-    { label: 'Total Appointments', value: valueOrLoading(counts.total), icon: '📅', color: 'from-blue-500 to-blue-600' },
-    { label: 'Upcoming', value: valueOrLoading(counts.upcoming), icon: '⏰', color: 'from-emerald-500 to-emerald-600' },
-    { label: 'Completed', value: valueOrLoading(counts.completed), icon: '✅', color: 'from-green-500 to-green-600' },
-    { label: 'Cancelled', value: valueOrLoading(counts.cancelled), icon: '❌', color: 'from-red-500 to-red-600' },
+    { label: 'Total Appointments', value: valueOrLoading(counts.total), icon: '📅', color: 'from-slate-700 to-slate-800' },
+    { label: 'Upcoming', value: valueOrLoading(counts.upcoming), icon: '⏰', color: 'from-teal-700 to-teal-800' },
+    { label: 'Completed', value: valueOrLoading(counts.completed), icon: '✅', color: 'from-emerald-700 to-emerald-800' },
+    { label: 'Cancelled', value: valueOrLoading(counts.cancelled), icon: '❌', color: 'from-amber-700 to-amber-800' },
   ];
 
   return (
@@ -87,7 +87,7 @@ const StatsCards: React.FC = () => {
       {stats.map((stat, idx) => (
         <div
           key={idx}
-          className={`bg-gradient-to-br ${stat.color} rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition transform hover:scale-105`}
+          className={`bg-gradient-to-br ${stat.color} rounded-2xl p-6 text-white shadow-2xl border border-slate-600/50 hover:shadow-xl transition transform hover:scale-105`}
         >
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-sm opacity-90">{stat.label}</h3>

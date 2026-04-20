@@ -739,6 +739,32 @@ export const getStaffAppointments = async (staffUserId: number) => {
 };
 
 /**
+ * Get all appointments for admin management
+ */
+export const getAdminAppointments = async () => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      `SELECT a.Id, a.CustomerUserId, a.StaffUserId, a.ServiceId,
+              a.AppointmentDate, a.AppointmentTime, a.Status, a.TotalPrice, a.DurationMinutes, a.CreatedAt,
+              cu.Name AS CustomerName,
+              su.Name AS StaffName,
+              s.Name AS ServiceName
+       FROM Appointments a
+       JOIN Users cu ON a.CustomerUserId = cu.Id
+       JOIN Users su ON a.StaffUserId = su.Id
+       JOIN Services s ON a.ServiceId = s.Id
+       ORDER BY a.AppointmentDate DESC, a.AppointmentTime DESC`
+    );
+    connection.release();
+    return rows;
+  } catch (error) {
+    console.error('Error fetching admin appointments:', error);
+    throw error;
+  }
+};
+
+/**
  * Update appointment status (Staff/Admin)
  */
 export const updateAppointmentStatus = async (appointmentId: number, staffUserId: number, status: string) => {

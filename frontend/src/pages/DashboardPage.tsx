@@ -39,7 +39,9 @@ const DashboardPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-100">
+    <div className="min-h-screen bg-slate-900 flex flex-col relative overflow-hidden">
+      <div className="pointer-events-none absolute top-24 left-10 w-72 h-72 bg-teal-600 rounded-full mix-blend-screen filter blur-3xl opacity-10"></div>
+      <div className="pointer-events-none absolute bottom-24 right-10 w-72 h-72 bg-emerald-600 rounded-full mix-blend-screen filter blur-3xl opacity-10"></div>
       {/* Top Navigation */}
       <TopNav
         userName={user?.name}
@@ -49,7 +51,7 @@ const DashboardPage: React.FC = () => {
         onMarkAsRead={markAsRead}
       />
 
-      <div className="flex">
+      <div className="flex flex-1">
         {/* Sidebar */}
         <Sidebar
           activeTab={activeTab}
@@ -59,7 +61,7 @@ const DashboardPage: React.FC = () => {
         />
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10">
           {/* Dashboard Tab */}
           {activeTab === 'dashboard' && (
             <div className="space-y-8 animate-fade-in">

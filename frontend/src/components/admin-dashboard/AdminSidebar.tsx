@@ -1,6 +1,6 @@
 import React from 'react';
 
-type AdminTabType = 'dashboard' | 'customers' | 'staff' | 'services' | 'appointments' | 'categories' | 'reviews' | 'payments' | 'settings' | 'notifications';
+type AdminTabType = 'dashboard' | 'customers' | 'staff' | 'services' | 'appointments' | 'categories' | 'reviews' | 'settings' | 'notifications';
 
 interface AdminSidebarProps {
   activeTab: AdminTabType;
@@ -18,7 +18,6 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, onTabChange, sid
     { id: 'appointments', label: 'Appointments', icon: '🗓️' },
     { id: 'categories', label: 'Categories', icon: '🗂️' },
     { id: 'reviews', label: 'Reviews & Ratings', icon: '⭐' },
-    { id: 'payments', label: 'Payments & Reports', icon: '💰' },
     { id: 'settings', label: 'System Settings', icon: '⚙️' },
     { id: 'notifications', label: 'Notifications', icon: '🔔' },
   ];

@@ -21,9 +21,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, sidebarOpen, 
 
   return (
     <aside
-      className={`fixed md:relative left-0 top-16 md:top-0 h-[calc(100vh-64px)] md:h-auto bg-white shadow-lg transition-all duration-300 z-40 ${
+      className={`fixed md:relative left-0 top-16 md:top-0 h-[calc(100vh-64px)] md:h-auto bg-slate-900/95 backdrop-blur-md shadow-xl transition-all duration-300 z-40 ${
         sidebarOpen ? 'w-64' : 'w-0 md:w-64'
-      } overflow-y-auto border-r border-emerald-100`}
+      } overflow-y-auto border-r border-slate-700/70`}
     >
       <nav className="p-4 space-y-2">
         {menuItems.map(item => (
@@ -33,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, sidebarOpen, 
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition ${
               activeTab === item.id
                 ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
-                : 'text-gray-700 hover:bg-emerald-50'
+                : 'text-slate-300 hover:bg-slate-800 hover:text-teal-300'
             }`}
           >
             <span className="text-xl">{item.icon}</span>
@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, sidebarOpen, 
         ))}
         <button
           onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition mt-6 border-t pt-6"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-amber-200 hover:bg-slate-800 hover:text-amber-100 transition mt-6 border-t border-slate-700 pt-6"
         >
           <span className="text-xl">🚪</span>
           <span className="font-semibold">Logout</span>

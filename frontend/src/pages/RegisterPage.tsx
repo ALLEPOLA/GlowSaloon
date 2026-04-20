@@ -69,74 +69,76 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-100 flex items-center justify-center p-4 relative">
-      <div className="absolute top-10 right-10 text-green-200 text-6xl opacity-30">🌿</div>
-      <div className="absolute bottom-20 left-10 text-green-200 text-6xl opacity-30">🍃</div>
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-10 right-10 text-teal-800 text-6xl opacity-20 animate-pulse">🌿</div>
+      <div className="absolute bottom-20 left-10 text-teal-800 text-6xl opacity-20 animate-pulse">🍃</div>
+      <div className="absolute top-1/4 left-20 w-72 h-72 bg-teal-600 rounded-full mix-blend-screen filter blur-3xl opacity-10"></div>
+      <div className="absolute bottom-1/4 right-20 w-72 h-72 bg-emerald-600 rounded-full mix-blend-screen filter blur-3xl opacity-10"></div>
       
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative z-10 border-t-4 border-emerald-500 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Create Account</h2>
+      <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 w-full max-w-md relative z-10 border border-slate-600/50 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-3xl font-bold text-slate-100 mb-6 text-center">Create Account</h2>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          <div className="mb-4 p-4 bg-slate-900/50 border-l-4 border-red-500 text-red-400 rounded-lg">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Full Name *</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
               placeholder="John Doe"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Email *</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
               placeholder="john@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Phone</label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
               placeholder="+1 (555) 123-4567"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Date of Birth</label>
             <input
               type="date"
               name="dateOfBirth"
               value={formData.dateOfBirth}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Gender</label>
             <select
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
             >
               <option value="Other">Other</option>
               <option value="Male">Male</option>
@@ -145,37 +147,37 @@ const RegisterPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Address</label>
             <textarea
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
               placeholder="123 Main St, City, State"
               rows={3}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Password *</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
               placeholder="••••••••"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
+            <label className="block text-sm font-medium text-slate-300 mb-1">Confirm Password *</label>
             <input
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+              className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
               placeholder="••••••••"
             />
           </div>
@@ -183,15 +185,15 @@ const RegisterPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold rounded-lg transition disabled:bg-gray-400 shadow-md"
+            className="w-full py-3 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-semibold rounded-lg transition disabled:bg-slate-600 shadow-md"
           >
             {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
 
-        <p className="text-center text-gray-600 mt-6">
+        <p className="text-center text-slate-400 mt-6">
           Already have an account?{' '}
-          <a href="/login" className="text-emerald-600 hover:text-emerald-700 font-semibold">
+          <a href="/login" className="text-teal-400 hover:text-teal-300 font-semibold">
             Login here
           </a>
         </p>
