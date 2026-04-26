@@ -156,7 +156,7 @@ const LoginPage: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <span>🚀</span>
+               
                     Sign In
                   </>
                 )}

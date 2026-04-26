@@ -39,7 +39,7 @@ const AdminWelcomeSection: React.FC<AdminWelcomeSectionProps> = ({ userName = 'A
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-3xl font-bold text-slate-100 mb-2">
-            {getGreeting()}, <span className="bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">{userName}</span>! 🚀
+            {getGreeting()}, <span className="bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">{userName}</span>! 
           </h2>
           <div className="flex items-center gap-3 text-slate-400 font-medium">
             <span className="flex items-center gap-1">📅 {currentDate}</span>

@@ -12,8 +12,10 @@ const initializeTables = async () => {
   try {
     await queries.ensureReviewsTable();
     await queries.ensureStaffLeavesTable();
+    await queries.ensureSystemSettingsTable();
     console.log('Reviews table ready');
     console.log('StaffLeaves table ready');
+    console.log('SystemSettings table ready');
   } catch (error) {
     console.error('Table initialization failed:', error);
   }
@@ -1454,6 +1456,76 @@ app.get('/admin/notifications', authenticateToken, requireAdminRole, async (req:
   } catch (error) {
     console.error('Error fetching admin notifications:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch admin notifications' });
+  }
+});
+
+/**
+ * GET /admin/system-settings
+ * Get editable system settings (admin only)
+ */
+app.get('/admin/system-settings', authenticateToken, requireAdminRole, async (req: AuthRequest, res: Response) => {
+  try {
+    const settings = await queries.getSystemSettings();
+    res.json({
+      success: true,
+      data: settings,
+    });
+  } catch (error) {
+    console.error('Error fetching system settings:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch system settings' });
+  }
+});
+
+/**
+ * PUT /admin/system-settings
+ * Save editable system settings (admin only)
+ */
+app.put('/admin/system-settings', authenticateToken, requireAdminRole, async (req: AuthRequest, res: Response) => {
+  try {
+    const settings = req.body;
+    if (!settings || typeof settings !== 'object') {
+      return res.status(400).json({ success: false, message: 'Valid settings payload is required' });
+    }
+
+    if (!settings.salonName || !settings.contactEmail || !settings.address || !settings.phone) {
+      return res.status(400).json({
+        success: false,
+        message: 'salonName, contactEmail, address, and phone are required',
+      });
+    }
+
+    if (settings.currencyCode && typeof settings.currencyCode !== 'string') {
+      return res.status(400).json({ success: false, message: 'currencyCode must be a string' });
+    }
+
+    if (settings.currencyCode && settings.currencyCode.toUpperCase() !== 'LKR') {
+      return res.status(400).json({ success: false, message: 'Only LKR currency is supported' });
+    }
+
+    await queries.updateSystemSettings(
+      {
+        salonName: settings.salonName,
+        contactEmail: settings.contactEmail,
+        address: settings.address,
+        phone: settings.phone,
+        currencyCode: 'LKR',
+        currencyLocale: 'en-LK',
+        operatingHours: settings.operatingHours || {},
+        securityAdmins: settings.securityAdmins || {},
+        notificationRules: settings.notificationRules || {},
+      },
+      req.user?.id
+    );
+
+    const updated = await queries.getSystemSettings();
+    res.json({
+      success: true,
+      message: 'System settings saved successfully',
+      data: updated,
+    });
+  } catch (error) {
+    console.error('Error updating system settings:', error);
+    res.status(500).json({ success: false, message: 'Failed to update system settings' });
   }
 });
 

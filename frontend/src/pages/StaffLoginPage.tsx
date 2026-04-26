@@ -313,7 +313,7 @@ const StaffLoginPage: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <span>🚀</span>
+                    
                       Access Portal
                     </>
                   )}

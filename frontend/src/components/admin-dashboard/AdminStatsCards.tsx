@@ -6,7 +6,7 @@ const AdminStatsCards: React.FC = () => {
   const [todayAppointments, setTodayAppointments] = useState('0');
   const [monthlyAppointments, setMonthlyAppointments] = useState('0');
   const [pendingAppointments, setPendingAppointments] = useState('0');
-  const [monthlyRevenue, setMonthlyRevenue] = useState('$0');
+  const [monthlyRevenue, setMonthlyRevenue] = useState('Rs. 0.00');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const AdminStatsCards: React.FC = () => {
         return;
       }
 
-      const [customerRes, staffRes, appointmentsRes] = await Promise.all([
+      const [customerRes, staffRes, appointmentsRes, settingsRes] = await Promise.all([
         fetch('http://localhost:3000/admin/stats/customers-count', {
           method: 'GET',
           headers: {
@@ -44,8 +44,29 @@ const AdminStatsCards: React.FC = () => {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
+        }),
+        fetch('http://localhost:3000/admin/system-settings', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         })
       ]);
+
+      let currencyCode = 'LKR';
+      let currencyLocale = 'en-LK';
+      if (settingsRes.ok) {
+        const settingsData = await settingsRes.json();
+        if (settingsData.success && settingsData.data) {
+          currencyCode = settingsData.data.currencyCode || 'LKR';
+          currencyLocale = settingsData.data.currencyLocale || 'en-LK';
+          localStorage.setItem(
+            'systemCurrency',
+            JSON.stringify({ code: currencyCode, locale: currencyLocale })
+          );
+        }
+      }
 
       if (customerRes.ok) {
         const customerData = await customerRes.json();
@@ -69,7 +90,11 @@ const AdminStatsCards: React.FC = () => {
           setPendingAppointments(Number(appData.data.pendingAppointments || 0).toLocaleString());
           const revenue = Number(appData.data.monthlyRevenue || 0);
           setMonthlyRevenue(
-            revenue.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 })
+            revenue.toLocaleString(currencyLocale, {
+              style: 'currency',
+              currency: currencyCode,
+              maximumFractionDigits: 2,
+            })
           );
         }
       }

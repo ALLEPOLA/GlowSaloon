@@ -1,6 +1,54 @@
 import pool from './db';
 import { RowDataPacket } from 'mysql2';
 
+export type SystemSettingsPayload = {
+  salonName: string;
+  contactEmail: string;
+  address: string;
+  phone: string;
+  currencyCode: string;
+  currencyLocale: string;
+  operatingHours: Record<string, { open: string; close: string; isClosed: boolean }>;
+  securityAdmins: {
+    enforceStrongPasswords: boolean;
+    requireTwoFactorForAdmins: boolean;
+    adminSessionTimeoutMinutes: number;
+    maxFailedLoginAttempts: number;
+  };
+  notificationRules: {
+    emailBookingAlerts: boolean;
+    smsBookingAlerts: boolean;
+    staffLeaveAlerts: boolean;
+    reviewAlerts: boolean;
+    dailySummaryTime: string;
+  };
+};
+
+const defaultOperatingHours: SystemSettingsPayload['operatingHours'] = {
+  Monday: { open: '09:00', close: '18:00', isClosed: false },
+  Tuesday: { open: '09:00', close: '18:00', isClosed: false },
+  Wednesday: { open: '09:00', close: '18:00', isClosed: false },
+  Thursday: { open: '09:00', close: '18:00', isClosed: false },
+  Friday: { open: '09:00', close: '18:00', isClosed: false },
+  Saturday: { open: '10:00', close: '17:00', isClosed: false },
+  Sunday: { open: '10:00', close: '17:00', isClosed: true },
+};
+
+const defaultSecurityAdmins: SystemSettingsPayload['securityAdmins'] = {
+  enforceStrongPasswords: true,
+  requireTwoFactorForAdmins: true,
+  adminSessionTimeoutMinutes: 30,
+  maxFailedLoginAttempts: 5,
+};
+
+const defaultNotificationRules: SystemSettingsPayload['notificationRules'] = {
+  emailBookingAlerts: true,
+  smsBookingAlerts: false,
+  staffLeaveAlerts: true,
+  reviewAlerts: true,
+  dailySummaryTime: '18:00',
+};
+
 // ==================== AUTHENTICATION QUERIES ====================
 
 /**
@@ -985,6 +1033,125 @@ export const ensureStaffLeavesTable = async () => {
     connection.release();
   } catch (error) {
     console.error('Error ensuring StaffLeaves table:', error);
+    throw error;
+  }
+};
+
+export const ensureSystemSettingsTable = async () => {
+  try {
+    const connection = await pool.getConnection();
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS SystemSettings (
+        Id INT PRIMARY KEY DEFAULT 1,
+        SalonName VARCHAR(255) NOT NULL,
+        ContactEmail VARCHAR(255) NOT NULL,
+        Address TEXT NOT NULL,
+        Phone VARCHAR(50) NOT NULL,
+        CurrencyCode VARCHAR(10) NOT NULL DEFAULT 'LKR',
+        CurrencyLocale VARCHAR(30) NOT NULL DEFAULT 'en-LK',
+        OperatingHours JSON NOT NULL,
+        SecurityAdmins JSON NOT NULL,
+        NotificationRules JSON NOT NULL,
+        UpdatedByUserId INT NULL,
+        CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        CONSTRAINT chk_system_settings_singleton CHECK (Id = 1),
+        FOREIGN KEY (UpdatedByUserId) REFERENCES Users(Id) ON DELETE SET NULL
+      )
+    `);
+
+    await connection.query(
+      `INSERT INTO SystemSettings
+       (Id, SalonName, ContactEmail, Address, Phone, CurrencyCode, CurrencyLocale, OperatingHours, SecurityAdmins, NotificationRules)
+       VALUES (1, ?, ?, ?, ?, 'LKR', 'en-LK', ?, ?, ?)
+       ON DUPLICATE KEY UPDATE Id = Id`,
+      [
+        'GlowVault Salon & Spa',
+        'hello@glowvault.com',
+        '123 Eco Boulevard, Green District, NY 10001',
+        '+94 11 555 1234',
+        JSON.stringify(defaultOperatingHours),
+        JSON.stringify(defaultSecurityAdmins),
+        JSON.stringify(defaultNotificationRules),
+      ]
+    );
+    connection.release();
+  } catch (error) {
+    console.error('Error ensuring SystemSettings table:', error);
+    throw error;
+  }
+};
+
+export const getSystemSettings = async (): Promise<SystemSettingsPayload> => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      `SELECT SalonName, ContactEmail, Address, Phone, CurrencyCode, CurrencyLocale,
+              OperatingHours, SecurityAdmins, NotificationRules
+       FROM SystemSettings
+       WHERE Id = 1
+       LIMIT 1`
+    );
+    connection.release();
+
+    const row = Array.isArray(rows) && rows.length > 0 ? (rows[0] as any) : null;
+    if (!row) {
+      return {
+        salonName: 'GlowVault Salon & Spa',
+        contactEmail: 'hello@glowvault.com',
+        address: '123 Eco Boulevard, Green District, NY 10001',
+        phone: '+94 11 555 1234',
+        currencyCode: 'LKR',
+        currencyLocale: 'en-LK',
+        operatingHours: defaultOperatingHours,
+        securityAdmins: defaultSecurityAdmins,
+        notificationRules: defaultNotificationRules,
+      };
+    }
+
+    return {
+      salonName: row.SalonName,
+      contactEmail: row.ContactEmail,
+      address: row.Address,
+      phone: row.Phone,
+      currencyCode: row.CurrencyCode || 'LKR',
+      currencyLocale: row.CurrencyLocale || 'en-LK',
+      operatingHours: typeof row.OperatingHours === 'string' ? JSON.parse(row.OperatingHours) : row.OperatingHours,
+      securityAdmins: typeof row.SecurityAdmins === 'string' ? JSON.parse(row.SecurityAdmins) : row.SecurityAdmins,
+      notificationRules:
+        typeof row.NotificationRules === 'string' ? JSON.parse(row.NotificationRules) : row.NotificationRules,
+    };
+  } catch (error) {
+    console.error('Error fetching system settings:', error);
+    throw error;
+  }
+};
+
+export const updateSystemSettings = async (payload: SystemSettingsPayload, updatedByUserId?: number) => {
+  try {
+    const connection = await pool.getConnection();
+    const [result] = await connection.query(
+      `UPDATE SystemSettings
+       SET SalonName = ?, ContactEmail = ?, Address = ?, Phone = ?, CurrencyCode = ?, CurrencyLocale = ?,
+           OperatingHours = ?, SecurityAdmins = ?, NotificationRules = ?, UpdatedByUserId = ?
+       WHERE Id = 1`,
+      [
+        payload.salonName,
+        payload.contactEmail,
+        payload.address,
+        payload.phone,
+        payload.currencyCode || 'LKR',
+        payload.currencyLocale || 'en-LK',
+        JSON.stringify(payload.operatingHours || defaultOperatingHours),
+        JSON.stringify(payload.securityAdmins || defaultSecurityAdmins),
+        JSON.stringify(payload.notificationRules || defaultNotificationRules),
+        updatedByUserId || null,
+      ]
+    );
+    connection.release();
+    return result;
+  } catch (error) {
+    console.error('Error updating system settings:', error);
     throw error;
   }
 };

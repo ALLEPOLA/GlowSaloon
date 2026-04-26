@@ -28,7 +28,7 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
           {/* Left Section */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-3xl text-teal-300">👑</span>
+              <span className="text-3xl text-teal-300"></span>
               <h1 className="text-2xl font-black bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent tracking-tight">
                 GlowVault Admin
               </h1>

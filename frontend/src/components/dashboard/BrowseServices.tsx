@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/authService'; // Use authenticated api instance
+import { formatCurrency } from '../../utils/currency';
 
 interface Service {
   Id: number;
@@ -201,9 +202,7 @@ const BrowseServices: React.FC = () => {
                           <div className="flex items-end justify-between bg-slate-900/40 p-4 rounded-xl border border-slate-700 mt-4">
                             <div>
                                <p className="text-xs font-semibold text-teal-300/70 uppercase tracking-wide mb-1">Price</p>
-                               <p className="text-2xl font-black text-teal-300">
-                                 ${Number(service.Price).toFixed(2)}
-                               </p>
+                               <p className="text-2xl font-black text-teal-300">{formatCurrency(Number(service.Price))}</p>
                             </div>
                             <div className="text-right">
                                <p className="text-xs font-semibold text-teal-300/70 uppercase tracking-wide mb-1">Duration</p>
@@ -261,7 +260,7 @@ const BrowseServices: React.FC = () => {
                     <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-700">
                       <div>
                         <p className="text-xs text-slate-400 uppercase font-bold tracking-wide">Total</p>
-                        <p className="text-xl font-bold text-teal-300">${Number(selectedService.Price).toFixed(2)}</p>
+                        <p className="text-xl font-bold text-teal-300">{formatCurrency(Number(selectedService.Price))}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-slate-400 uppercase font-bold tracking-wide">Duration</p>

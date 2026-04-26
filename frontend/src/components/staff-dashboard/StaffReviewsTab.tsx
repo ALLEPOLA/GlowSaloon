@@ -45,22 +45,22 @@ const StaffReviewsTab: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Overall Synthesis */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 flex flex-col md:flex-row items-center gap-8 justify-center border-t-4 border-yellow-400">
+      <div className="bg-slate-800/95 rounded-2xl shadow-2xl p-8 mb-8 flex flex-col md:flex-row items-center gap-8 justify-center border border-slate-700">
         <div className="text-center">
-          <h2 className="text-5xl font-black text-gray-800">{averageRating.toFixed(1)}</h2>
+          <h2 className="text-5xl font-black text-slate-100">{averageRating.toFixed(1)}</h2>
           <div className="text-yellow-400 text-2xl my-2">
             {'★'.repeat(Math.round(averageRating))}{'☆'.repeat(5 - Math.round(averageRating))}
           </div>
-          <p className="text-gray-500 font-medium">Based on {reviews.length} reviews</p>
+          <p className="text-slate-400 font-medium">Based on {reviews.length} reviews</p>
         </div>
         
-        <div className="hidden md:block w-px h-24 bg-gray-200"></div>
+        <div className="hidden md:block w-px h-24 bg-slate-700"></div>
         
         <div className="w-full md:w-1/2 space-y-2">
           {[5,4,3,2,1].map(star => (
             <div key={star} className="flex items-center gap-2 text-sm">
-              <span className="w-8 font-bold text-gray-600">{star} ★</span>
-              <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden">
+              <span className="w-8 font-bold text-slate-300">{star} ★</span>
+              <div className="flex-1 h-3 bg-slate-700 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-yellow-400 rounded-full"
                   style={{ width: `${reviews.length ? (distribution[star] / reviews.length) * 100 : 0}%` }}
@@ -73,26 +73,26 @@ const StaffReviewsTab: React.FC = () => {
 
       {/* Reviews List */}
       <div className="space-y-4">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6">Recent Customer Feedback</h3>
+        <h3 className="text-2xl font-bold text-slate-100 mb-6">Recent Customer Feedback</h3>
         {loading && (
-          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center text-gray-500 font-semibold">
+          <div className="bg-slate-800/95 rounded-xl shadow-md p-6 border border-slate-700 text-center text-slate-400 font-semibold">
             Loading reviews...
           </div>
         )}
         {!loading && reviews.length === 0 && (
-          <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100 text-center text-gray-500">
+          <div className="bg-slate-800/95 rounded-xl shadow-md p-6 border border-slate-700 text-center text-slate-400">
             No reviews available yet.
           </div>
         )}
         {reviews.map(review => (
-          <div key={review.Id} className="bg-white rounded-xl shadow-md p-6 border border-gray-100 transition hover:shadow-lg">
+          <div key={review.Id} className="bg-slate-800/95 rounded-xl shadow-md p-6 border border-slate-700 transition hover:shadow-lg">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-100 text-emerald-700 font-bold rounded-full flex items-center justify-center text-xl">
+                <div className="w-12 h-12 bg-emerald-900/30 text-emerald-200 font-bold rounded-full flex items-center justify-center text-xl border border-slate-700">
                   {String(review.CustomerName || '').charAt(0)}
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-800 text-lg">{review.CustomerName}</h4>
+                  <h4 className="font-bold text-slate-100 text-lg">{review.CustomerName}</h4>
                   <p className="text-emerald-600 text-sm font-medium">{review.ServiceName}</p>
                 </div>
               </div>
@@ -100,10 +100,10 @@ const StaffReviewsTab: React.FC = () => {
                 <div className="text-yellow-400 tracking-widest text-lg">
                   {'★'.repeat(Number(review.Rating || 0))}{'☆'.repeat(5 - Number(review.Rating || 0))}
                 </div>
-                <span className="text-gray-400 text-xs font-semibold">{formatDate(review.CreatedAt)}</span>
+                <span className="text-slate-400 text-xs font-semibold">{formatDate(review.CreatedAt)}</span>
               </div>
             </div>
-            <p className="text-gray-600 italic bg-gray-50 p-4 rounded-lg border-l-4 border-emerald-500">"{review.Comment || 'No comment provided.'}"</p>
+            <p className="text-slate-300 italic bg-slate-900/40 p-4 rounded-lg border-l-4 border-emerald-500">"{review.Comment || 'No comment provided.'}"</p>
           </div>
         ))}
       </div>

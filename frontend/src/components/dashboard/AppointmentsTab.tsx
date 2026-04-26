@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/authService';
+import { formatCurrency } from '../../utils/currency';
 
 interface Appointment {
   Id: number;
@@ -179,7 +180,7 @@ const AppointmentsTab: React.FC = () => {
                       🕐 {formatTime(apt.AppointmentTime)}
                     </span>
                     <span className="flex items-center gap-1.5 text-slate-300 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 font-medium">
-                      ${Number(apt.TotalPrice).toFixed(2)}
+                      {formatCurrency(Number(apt.TotalPrice))}
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-3">
