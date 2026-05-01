@@ -341,7 +341,7 @@ const StaffLoginPage: React.FC = () => {
                         ? 'border-teal-500 shadow-lg shadow-teal-500/20 bg-slate-900/50'
                         : 'border-slate-600 hover:border-teal-400 bg-slate-700/50'
                     }`}
-                    placeholder="John Doe"
+                    placeholder=""
                   />
                 </div>
 

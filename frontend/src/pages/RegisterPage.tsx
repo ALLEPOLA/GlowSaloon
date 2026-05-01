@@ -93,7 +93,7 @@ const RegisterPage: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-slate-600 bg-slate-700/50 text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
-              placeholder="John Doe"
+              placeholder=""
             />
           </div>
 

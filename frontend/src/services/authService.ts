@@ -94,6 +94,16 @@ export const authService = {
       throw error;
     }
   },
+
+  getCustomerAppointments: async () => {
+    try {
+      const response = await api.get('/customer/appointments');
+      return response.data.data || [];
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+      return [];
+    }
+  },
 };
 
 export default api;

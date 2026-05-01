@@ -19,7 +19,7 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={[3]}>
                 <DashboardPage />
               </ProtectedRoute>
             }
@@ -28,7 +28,7 @@ function App() {
           <Route
             path="/staff-dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={[2]}>
                 <StaffDashboardPage />
               </ProtectedRoute>
             }
@@ -36,7 +36,7 @@ function App() {
           <Route
             path="/admin-dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={[1]}>
                 <AdminDashboardPage />
               </ProtectedRoute>
             }

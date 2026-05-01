@@ -690,10 +690,10 @@ export const getStaffServices = async (userId: number) => {
 export const updateStaffServices = async (userId: number, serviceIds: number[]) => {
   try {
     const connection = await pool.getConnection();
-    
+
     // In MySQL, JSON column can be updated by stringifying the array
     const servicesJson = JSON.stringify(serviceIds);
-    
+
     const [result] = await connection.query(
       `UPDATE Staff SET MyServices = ? WHERE UserId = ?`,
       [servicesJson, userId]

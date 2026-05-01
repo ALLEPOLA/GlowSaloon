@@ -26,7 +26,7 @@ const StaffWelcomeSection: React.FC<StaffWelcomeSectionProps> = ({ userName = 'S
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-3xl font-bold text-slate-100 mb-2">
-            {getGreeting()}, <span className="bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">{userName}</span>! 👋
+            {getGreeting()}, <span className="bg-gradient-to-r from-teal-300 to-emerald-300 bg-clip-text text-transparent">{userName}</span>! 
           </h2>
           <p className="text-slate-400 text-lg">{currentDate}</p>
         </div>
