@@ -64,6 +64,22 @@ export const authService = {
     return response.data;
   },
 
+  googleLogin: async (googleToken: string): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>('/auth/google-login', { googleToken });
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+    return response.data;
+  },
+
+  googleSignUp: async (googleToken: string): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>('/auth/google-signup', { googleToken });
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
+    return response.data;
+  },
+
   staffLogin: async (data: LoginData): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('/auth/staff-login', data);
     if (response.data.token) {

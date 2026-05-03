@@ -14,6 +14,8 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
+  googleLogin: (googleToken: string) => Promise<void>;
+  googleSignUp: (googleToken: string) => Promise<void>;
   staffLogin: (email: string, password: string) => Promise<any>;
   register: (data: any) => Promise<void>;
   logout: () => void;
@@ -79,6 +81,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const googleLogin = async (googleToken: string) => {
+    try {
+      const response = await authService.googleLogin(googleToken);
+      if (response.success && response.token && response.user) {
+        setToken(response.token);
+        setUser(response.user);
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+      } else {
+        throw new Error(response.message || 'Google login failed');
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const googleSignUp = async (googleToken: string) => {
+    try {
+      const response = await authService.googleSignUp(googleToken);
+      if (response.success && response.token && response.user) {
+        setToken(response.token);
+        setUser(response.user);
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+      } else {
+        throw new Error(response.message || 'Google sign up failed');
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const staffLogin = async (email: string, password: string) => {
     try {
       const response = await authService.staffLogin({ email, password });
@@ -123,6 +157,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         isAuthenticated: !!token && !!user,
         login,
+        googleLogin,
+        googleSignUp,
         staffLogin,
         register,
         logout,
