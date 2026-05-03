@@ -1388,3 +1388,139 @@ export const getAdminAppointmentStats = async () => {
     throw error;
   }
 };
+
+// ==================== PROFILE UPDATE QUERIES ====================
+
+/**
+ * Get staff profile by user ID
+ */
+export const getStaffProfile = async (userId: number) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      `SELECT s.Id, s.UserId, s.Specialization, s.YearsOfExperience, s.Bio, s.ProfilePhoto, s.IsActive,
+              u.Name, u.Email, u.Phone
+       FROM Staff s
+       JOIN Users u ON s.UserId = u.Id
+       WHERE s.UserId = ?`,
+      [userId]
+    );
+    connection.release();
+
+    if (Array.isArray(rows) && rows.length > 0) {
+      return rows[0];
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching staff profile:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update customer profile (partial update - only provided fields)
+ */
+export const updateCustomerProfile = async (userId: number, updates: Record<string, any>) => {
+  try {
+    const connection = await pool.getConnection();
+
+    // Separate user and customer fields
+    const userFields = ['Name', 'Phone'];
+    const customerFields = ['DateOfBirth', 'Gender', 'Address', 'ProfilePhoto'];
+
+    const userUpdates: Record<string, any> = {};
+    const customerUpdates: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (userFields.includes(key)) {
+        userUpdates[key] = value;
+      } else if (customerFields.includes(key)) {
+        customerUpdates[key] = value;
+      }
+    }
+
+    // Update Users table if there are changes
+    if (Object.keys(userUpdates).length > 0) {
+      const setClauses = Object.keys(userUpdates).map(key => `${key} = ?`).join(', ');
+      const values = Object.values(userUpdates);
+      values.push(userId);
+
+      await connection.query(
+        `UPDATE Users SET ${setClauses} WHERE Id = ?`,
+        values
+      );
+    }
+
+    // Update Customers table if there are changes
+    if (Object.keys(customerUpdates).length > 0) {
+      const setClauses = Object.keys(customerUpdates).map(key => `${key} = ?`).join(', ');
+      const values = Object.values(customerUpdates);
+      values.push(userId);
+
+      await connection.query(
+        `UPDATE Customers SET ${setClauses} WHERE UserId = ?`,
+        values
+      );
+    }
+
+    connection.release();
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating customer profile:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update staff profile (partial update - only provided fields)
+ */
+export const updateStaffProfile = async (userId: number, updates: Record<string, any>) => {
+  try {
+    const connection = await pool.getConnection();
+
+    // Separate user and staff fields
+    const userFields = ['Name', 'Phone'];
+    const staffFields = ['Specialization', 'YearsOfExperience', 'Bio', 'ProfilePhoto'];
+
+    const userUpdates: Record<string, any> = {};
+    const staffUpdates: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (userFields.includes(key)) {
+        userUpdates[key] = value;
+      } else if (staffFields.includes(key)) {
+        staffUpdates[key] = value;
+      }
+    }
+
+    // Update Users table if there are changes
+    if (Object.keys(userUpdates).length > 0) {
+      const setClauses = Object.keys(userUpdates).map(key => `${key} = ?`).join(', ');
+      const values = Object.values(userUpdates);
+      values.push(userId);
+
+      await connection.query(
+        `UPDATE Users SET ${setClauses} WHERE Id = ?`,
+        values
+      );
+    }
+
+    // Update Staff table if there are changes
+    if (Object.keys(staffUpdates).length > 0) {
+      const setClauses = Object.keys(staffUpdates).map(key => `${key} = ?`).join(', ');
+      const values = Object.values(staffUpdates);
+      values.push(userId);
+
+      await connection.query(
+        `UPDATE Staff SET ${setClauses} WHERE UserId = ?`,
+        values
+      );
+    }
+
+    connection.release();
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating staff profile:', error);
+    throw error;
+  }
+};

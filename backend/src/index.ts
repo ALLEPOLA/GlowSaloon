@@ -642,6 +642,136 @@ app.get('/customer/profile', authenticateToken, requireCustomerRole, async (req:
   }
 });
 
+/**
+ * PUT /customer/profile
+ * Update customer profile (only changed fields)
+ */
+app.put('/customer/profile', authenticateToken, requireCustomerRole, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+    }
+
+    const { Name, Phone, DateOfBirth, Gender, Address, ProfilePhoto } = req.body;
+
+    // Build update object with only provided fields
+    const updates: Record<string, any> = {};
+    if (Name !== undefined) updates.Name = Name;
+    if (Phone !== undefined) updates.Phone = Phone;
+    if (DateOfBirth !== undefined) updates.DateOfBirth = DateOfBirth;
+    if (Gender !== undefined) updates.Gender = Gender;
+    if (Address !== undefined) updates.Address = Address;
+    if (ProfilePhoto !== undefined) updates.ProfilePhoto = ProfilePhoto;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No fields to update',
+      });
+    }
+
+    await queries.updateCustomerProfile(req.user.id, updates);
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+    });
+  } catch (error) {
+    console.error('Error updating customer profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update customer profile',
+      error: String(error),
+    });
+  }
+});
+
+/**
+ * GET /staff/profile
+ * Get staff profile (staff only)
+ */
+app.get('/staff/profile', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+    }
+
+    const profile = await queries.getStaffProfile(req.user.id);
+
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: 'Staff profile not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      profile,
+    });
+  } catch (error) {
+    console.error('Error fetching staff profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch staff profile',
+      error: String(error),
+    });
+  }
+});
+
+/**
+ * PUT /staff/profile
+ * Update staff profile (only changed fields)
+ */
+app.put('/staff/profile', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated',
+      });
+    }
+
+    const { Name, Phone, Specialization, YearsOfExperience, Bio, ProfilePhoto } = req.body;
+
+    // Build update object with only provided fields
+    const updates: Record<string, any> = {};
+    if (Name !== undefined) updates.Name = Name;
+    if (Phone !== undefined) updates.Phone = Phone;
+    if (Specialization !== undefined) updates.Specialization = Specialization;
+    if (YearsOfExperience !== undefined) updates.YearsOfExperience = YearsOfExperience;
+    if (Bio !== undefined) updates.Bio = Bio;
+    if (ProfilePhoto !== undefined) updates.ProfilePhoto = ProfilePhoto;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No fields to update',
+      });
+    }
+
+    await queries.updateStaffProfile(req.user.id, updates);
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+    });
+  } catch (error) {
+    console.error('Error updating staff profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update staff profile',
+      error: String(error),
+    });
+  }
+});
+
 // ==================== APPOINTMENT ROUTES ====================
 
 /**
