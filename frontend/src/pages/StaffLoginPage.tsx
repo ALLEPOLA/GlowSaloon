@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 const StaffLoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { staffLogin, googleLogin } = useAuth();
+  const { staffLogin } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -129,27 +128,8 @@ const StaffLoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    setError('');
-    setLoading(true);
-
-    try {
-      await googleLogin(credentialResponse.credential);
-      // Navigate to staff dashboard by default, or admin if needed
-      navigate('/staff-dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Google login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleError = () => {
-    setError('Google login failed. Please try again.');
-  };
-
   return (
-    <GoogleOAuthProvider clientId="27562406372-k7sngkl7fusptqsu6g4tm0tb2a95crtm.apps.googleusercontent.com">
+    <>
       <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute top-10 right-10 text-teal-800 text-8xl opacity-10 animate-pulse" style={{animationDuration: '4s'}}>🛡️</div>
@@ -340,21 +320,6 @@ const StaffLoginPage: React.FC = () => {
                   )}
                 </button>
 
-                {/* Divider */}
-                <div className="my-4 flex items-center gap-3">
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-                  <span className="text-slate-500 text-sm">or</span>
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
-                </div>
-
-                {/* Google Sign-In Button */}
-                <div className="flex justify-center">
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={handleGoogleError}
-                    theme="filled_black"
-                  />
-                </div>
               </form>
             )}
 
@@ -519,8 +484,8 @@ const StaffLoginPage: React.FC = () => {
         .animate-slide-down { animation: slide-down 0.4s ease-out; }
         .animate-bounce-in { animation: bounce-in 0.5s ease-out; }
       `}</style>
-    </div>
-    </GoogleOAuthProvider>
+      </div>
+    </>
   );
 };
 
