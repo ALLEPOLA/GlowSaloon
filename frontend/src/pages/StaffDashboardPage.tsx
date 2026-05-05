@@ -15,6 +15,7 @@ import StaffLeavesTab from '../components/staff-dashboard/StaffLeavesTab';
 import StaffProfileTab from '../components/staff-dashboard/StaffProfileTab';
 import StaffReviewsTab from '../components/staff-dashboard/StaffReviewsTab';
 import StaffNotificationsTab from '../components/staff-dashboard/StaffNotificationsTab';
+import StaffRescheduleRequests from '../components/staff-dashboard/StaffRescheduleRequests';
 
 type TabType = 'dashboard' | 'appointments' | 'services' | 'leaves' | 'profile' | 'reviews' | 'notifications';
 type StaffNotification = {
@@ -115,6 +116,7 @@ const StaffDashboardPage: React.FC = () => {
           {activeTab === 'appointments' && (
             <div className="animate-fade-in space-y-8">
               <h2 className="text-3xl font-bold text-slate-100 mb-6">Master Appointment List</h2>
+              <StaffRescheduleRequests />
               <TodayAppointments />
               <div className="mt-8">
                 <StaffUpcomingAppointments />

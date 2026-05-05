@@ -120,6 +120,38 @@ export const authService = {
       return [];
     }
   },
+
+  requestReschedule: async (appointmentId: number, newDate: string, newTime: string, reason?: string) => {
+    try {
+      const response = await api.post(`/customer/appointments/${appointmentId}/reschedule-request`, {
+        newDate,
+        newTime,
+        reason,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getRescheduleRequests: async () => {
+    try {
+      const response = await api.get('/customer/reschedule-requests');
+      return response.data.data || [];
+    } catch (error) {
+      console.error('Error fetching reschedule requests:', error);
+      return [];
+    }
+  },
+
+  cancelAppointment: async (appointmentId: number) => {
+    try {
+      const response = await api.delete(`/customer/appointments/${appointmentId}/cancel`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default api;

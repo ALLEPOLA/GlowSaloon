@@ -14,7 +14,7 @@ interface StaffProfileTabProps {
   user?: { name: string; email: string; phone?: string; roleId?: number };
 }
 
-const StaffProfileTab: React.FC<StaffProfileTabProps> = ({ user }) => {
+const StaffProfileTab: React.FC<StaffProfileTabProps> = () => {
   const [leaves, setLeaves] = useState<any[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);

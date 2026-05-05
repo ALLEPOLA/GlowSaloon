@@ -1524,3 +1524,188 @@ export const updateStaffProfile = async (userId: number, updates: Record<string,
     throw error;
   }
 };
+
+// ==================== APPOINTMENT RESCHEDULE REQUESTS ====================
+
+/**
+ * Ensure RescheduleRequests table exists
+ */
+export const ensureRescheduleRequestsTable = async () => {
+  try {
+    const connection = await pool.getConnection();
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS RescheduleRequests (
+        Id INT AUTO_INCREMENT PRIMARY KEY,
+        AppointmentId INT NOT NULL,
+        CustomerUserId INT NOT NULL,
+        StaffUserId INT NOT NULL,
+        NewAppointmentDate DATE NOT NULL,
+        NewAppointmentTime TIME NOT NULL,
+        Reason TEXT,
+        Status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+        ReviewedByStaffUserId INT NULL,
+        ReviewedAt TIMESTAMP NULL,
+        CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (AppointmentId) REFERENCES Appointments(Id) ON DELETE CASCADE,
+        FOREIGN KEY (CustomerUserId) REFERENCES Users(Id) ON DELETE CASCADE,
+        FOREIGN KEY (StaffUserId) REFERENCES Users(Id) ON DELETE CASCADE,
+        FOREIGN KEY (ReviewedByStaffUserId) REFERENCES Users(Id) ON DELETE SET NULL
+      )
+    `);
+    connection.release();
+  } catch (error) {
+    console.error('Error ensuring RescheduleRequests table:', error);
+    throw error;
+  }
+};
+
+/**
+ * Create a reschedule request
+ */
+export const createRescheduleRequest = async (
+  appointmentId: number,
+  customerUserId: number,
+  staffUserId: number,
+  newDate: string,
+  newTime: string,
+  reason?: string
+) => {
+  try {
+    const connection = await pool.getConnection();
+    const [result] = await connection.query(
+      `INSERT INTO RescheduleRequests 
+       (AppointmentId, CustomerUserId, StaffUserId, NewAppointmentDate, NewAppointmentTime, Reason, Status)
+       VALUES (?, ?, ?, ?, ?, ?, 'Pending')`,
+      [appointmentId, customerUserId, staffUserId, newDate, newTime, reason || null]
+    );
+    connection.release();
+    return result;
+  } catch (error) {
+    console.error('Error creating reschedule request:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get reschedule requests for a customer
+ */
+export const getCustomerRescheduleRequests = async (customerUserId: number) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      `SELECT r.Id, r.AppointmentId, r.NewAppointmentDate, r.NewAppointmentTime, 
+              r.Reason, r.Status, r.CreatedAt, r.ReviewedAt,
+              a.ServiceId, s.Name AS ServiceName, u.Name AS StaffName,
+              a.AppointmentDate AS OldDate, a.AppointmentTime AS OldTime
+       FROM RescheduleRequests r
+       JOIN Appointments a ON r.AppointmentId = a.Id
+       JOIN Services s ON a.ServiceId = s.Id
+       JOIN Users u ON r.StaffUserId = u.Id
+       WHERE r.CustomerUserId = ?
+       ORDER BY r.CreatedAt DESC`,
+      [customerUserId]
+    );
+    connection.release();
+    return rows;
+  } catch (error) {
+    console.error('Error fetching customer reschedule requests:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get pending reschedule requests for staff
+ */
+export const getPendingRescheduleRequests = async (staffUserId: number) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      `SELECT r.Id, r.AppointmentId, r.NewAppointmentDate, r.NewAppointmentTime, 
+              r.Reason, r.CreatedAt,
+              a.ServiceId, a.AppointmentDate AS OldDate, a.AppointmentTime AS OldTime,
+              s.Name AS ServiceName, cu.Name AS CustomerName, cu.Phone AS CustomerPhone
+       FROM RescheduleRequests r
+       JOIN Appointments a ON r.AppointmentId = a.Id
+       JOIN Services s ON a.ServiceId = s.Id
+       JOIN Users cu ON r.CustomerUserId = cu.Id
+       WHERE r.StaffUserId = ? AND r.Status = 'Pending'
+       ORDER BY r.CreatedAt DESC`,
+      [staffUserId]
+    );
+    connection.release();
+    return rows;
+  } catch (error) {
+    console.error('Error fetching pending reschedule requests:', error);
+    throw error;
+  }
+};
+
+/**
+ * Approve or reject reschedule request
+ */
+export const reviewRescheduleRequest = async (
+  requestId: number,
+  staffUserId: number,
+  status: 'Approved' | 'Rejected'
+) => {
+  try {
+    const connection = await pool.getConnection();
+    
+    // Start transaction
+    await connection.beginTransaction();
+
+    // Update reschedule request
+    const [updateResult] = await connection.query(
+      `UPDATE RescheduleRequests
+       SET Status = ?, ReviewedByStaffUserId = ?, ReviewedAt = CURRENT_TIMESTAMP
+       WHERE Id = ? AND StaffUserId = ? AND Status = 'Pending'`,
+      [status, staffUserId, requestId, staffUserId]
+    );
+
+    // If approved, update the appointment
+    if (status === 'Approved') {
+      const [requestData] = await connection.query(
+        `SELECT AppointmentId, NewAppointmentDate, NewAppointmentTime FROM RescheduleRequests WHERE Id = ?`,
+        [requestId]
+      );
+
+      if (requestData && (requestData as any[]).length > 0) {
+        const request = (requestData as any[])[0];
+        await connection.query(
+          `UPDATE Appointments 
+           SET AppointmentDate = ?, AppointmentTime = ? 
+           WHERE Id = ?`,
+          [request.NewAppointmentDate, request.NewAppointmentTime, request.AppointmentId]
+        );
+      }
+    }
+
+    await connection.commit();
+    connection.release();
+    return updateResult;
+  } catch (error) {
+    console.error('Error reviewing reschedule request:', error);
+    throw error;
+  }
+};
+
+/**
+ * Cancel an appointment
+ */
+export const cancelAppointment = async (appointmentId: number, customerUserId: number, reason?: string) => {
+  try {
+    const connection = await pool.getConnection();
+    const [result] = await connection.query(
+      `UPDATE Appointments 
+       SET Status = 'Cancelled' 
+       WHERE Id = ? AND CustomerUserId = ? AND Status IN ('Pending', 'Confirmed')`,
+      [appointmentId, customerUserId]
+    );
+    connection.release();
+    return result;
+  } catch (error) {
+    console.error('Error canceling appointment:', error);
+    throw error;
+  }
+};

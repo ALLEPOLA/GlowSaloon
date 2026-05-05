@@ -68,7 +68,7 @@ const StaffUpcomingAppointments: React.FC = () => {
     }
   };
 
-  // Filter future appointments specifically (ignoring past/today for this widget if needed, or simply all future/pending)
+  // Filter future appointments and exclude cancelled/completed ones
   const isFuture = (dateStr: string) => {
     const aptDate = new Date(dateStr.split('T')[0]);
     const today = new Date();
@@ -76,7 +76,9 @@ const StaffUpcomingAppointments: React.FC = () => {
     return aptDate > today; // Strictly future technically, but we can include today's that aren't past
   };
 
-  const upcoming = appointments.filter(apt => isFuture(apt.AppointmentDate));
+  const upcoming = appointments.filter(apt => 
+    isFuture(apt.AppointmentDate) && apt.Status !== 'Cancelled' && apt.Status !== 'Completed'
+  );
 
   if (loading) {
     return <div className="p-8 text-center animate-pulse text-teal-300 font-bold">Loading upcoming schedule...</div>;

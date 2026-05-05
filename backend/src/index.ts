@@ -17,9 +17,11 @@ const initializeTables = async () => {
     await queries.ensureReviewsTable();
     await queries.ensureStaffLeavesTable();
     await queries.ensureSystemSettingsTable();
+    await queries.ensureRescheduleRequestsTable();
     console.log('Reviews table ready');
     console.log('StaffLeaves table ready');
     console.log('SystemSettings table ready');
+    console.log('RescheduleRequests table ready');
   } catch (error) {
     console.error('Table initialization failed:', error);
   }
@@ -921,6 +923,131 @@ app.post('/customer/reviews', authenticateToken, requireCustomerRole, async (req
   }
 });
 
+// ==================== APPOINTMENT RESCHEDULE ROUTES ====================
+
+/**
+ * POST /customer/appointments/:id/reschedule-request
+ * Request to reschedule an appointment
+ */
+app.post('/customer/appointments/:id/reschedule-request', authenticateToken, requireCustomerRole, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+
+    const { id } = req.params;
+    const { newDate, newTime, reason } = req.body;
+
+    if (!newDate || !newTime) {
+      return res.status(400).json({
+        success: false,
+        message: 'newDate and newTime are required',
+      });
+    }
+
+    // Get appointment to verify ownership and get staff ID
+    const appointments = await queries.getCustomerAppointments(req.user.id) as any[];
+    const appointment = appointments.find(apt => apt.Id == id);
+
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Appointment not found',
+      });
+    }
+
+    if (!['Pending', 'Confirmed'].includes(appointment.Status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Can only reschedule pending or confirmed appointments',
+      });
+    }
+
+    await queries.createRescheduleRequest(
+      Number(id),
+      req.user.id,
+      appointment.StaffUserId,
+      newDate,
+      newTime,
+      reason
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Reschedule request submitted. Awaiting stylist approval.',
+    });
+  } catch (error) {
+    console.error('Error creating reschedule request:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to submit reschedule request',
+      error: String(error),
+    });
+  }
+});
+
+/**
+ * GET /customer/reschedule-requests
+ * Get customer's reschedule requests
+ */
+app.get('/customer/reschedule-requests', authenticateToken, requireCustomerRole, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+
+    const requests = await queries.getCustomerRescheduleRequests(req.user.id);
+    res.json({
+      success: true,
+      data: requests,
+      count: (requests as any[]).length,
+    });
+  } catch (error) {
+    console.error('Error fetching reschedule requests:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch reschedule requests',
+      error: String(error),
+    });
+  }
+});
+
+/**
+ * DELETE /customer/appointments/:id/cancel
+ * Cancel an appointment
+ */
+app.delete('/customer/appointments/:id/cancel', authenticateToken, requireCustomerRole, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+
+    const { id } = req.params;
+
+    const result = await queries.cancelAppointment(Number(id), req.user.id);
+    const affectedRows = (result as any).affectedRows || 0;
+
+    if (affectedRows === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot cancel this appointment. It may have already been cancelled or completed.',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Appointment cancelled successfully',
+    });
+  } catch (error) {
+    console.error('Error canceling appointment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to cancel appointment',
+      error: String(error),
+    });
+  }
+});
+
 // ==================== SALON ROUTES ====================
 
 app.get('/salons', async (req: Request, res: Response) => {
@@ -1587,6 +1714,58 @@ app.put('/staff/appointments/:id/status', authenticateToken, async (req: AuthReq
   } catch (error) {
     console.error('Error updating appointment status:', error);
     res.status(500).json({ success: false, message: 'Failed to update status' });
+  }
+});
+
+/**
+ * GET /staff/reschedule-requests
+ * Get pending reschedule requests for staff
+ */
+app.get('/staff/reschedule-requests', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || (req.user.roleId !== 2 && req.user.roleId !== 1)) {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const requests = await queries.getPendingRescheduleRequests(req.user.id);
+    res.json({
+      success: true,
+      data: requests,
+      count: (requests as any[]).length,
+    });
+  } catch (error) {
+    console.error('Error fetching reschedule requests:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch reschedule requests' });
+  }
+});
+
+/**
+ * PUT /staff/reschedule-requests/:id/approve
+ * Approve or reject a reschedule request
+ */
+app.put('/staff/reschedule-requests/:id/:action', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user || (req.user.roleId !== 2 && req.user.roleId !== 1)) {
+      return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+
+    const { id, action } = req.params;
+
+    if (!['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ success: false, message: 'Invalid action. Use approve or reject.' });
+    }
+
+    const status = action === 'approve' ? 'Approved' : 'Rejected';
+    
+    await queries.reviewRescheduleRequest(Number(id), req.user.id, status as 'Approved' | 'Rejected');
+    
+    res.json({
+      success: true,
+      message: `Reschedule request ${action}ed successfully`
+    });
+  } catch (error) {
+    console.error('Error reviewing reschedule request:', error);
+    res.status(500).json({ success: false, message: 'Failed to review reschedule request' });
   }
 });
 
